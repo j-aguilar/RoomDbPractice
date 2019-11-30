@@ -10,12 +10,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,12 +33,18 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        users = new ArrayList<>();
+        /*users = new ArrayList<>();
 
         for (int i = 0; i < 10; i++) {
             User user = new User("j", "a", "ja@example.com");
             users.add(user);
-        }
+        }*/
+
+        AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "production")
+                .allowMainThreadQueries()
+                .build();
+
+        List<User> users = db.userDao().getAllUsers();
 
         recyclerView = findViewById(R.id.recycler_view);
 
@@ -45,12 +53,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, CreateUser.class));
-            }
-        });
+        fab.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, CreateUser.class)));
     }
 
 }
